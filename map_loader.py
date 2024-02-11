@@ -7,15 +7,17 @@ import requests
 API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
 
 
-def make_static_maps_response(someval, delta, map_or_sat, *pt):
+def make_static_maps_response(someval_, delta, map_or_sat, ):
+    global someval, pt_s
+    someval = list(map(float, someval_))
     delta = str(delta)
     map_params = {
-        "ll": ",".join((str(someval[0]), str(someval[1]))),
+        "ll": ",".join((str(someval_[0]), str(someval_[1]))),
         "spn": ",".join([delta, delta]),
         "l": map_or_sat
     }
-    if pt:
-        map_params['pt'] = '~'.join((','.join(i) for i in pt))
+    if pt_s:
+        map_params['pt'] = '~'.join((','.join(i) for i in pt_s))
         print(map_params['ll'])
         print(map_params['pt'])
     map_api_server = "http://static-maps.yandex.ru/1.x/"
@@ -33,6 +35,7 @@ def blit_amg(map_file):
 
 
 someval = [37.617698, 55.755864]
+pt_s = []
 delta = 0.2
 map_sat_hyb = 'map'
 map_file = make_static_maps_response(someval, delta, map_sat_hyb)
@@ -58,8 +61,9 @@ def func():
         json_response = response.json()
         toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
         toponym_coodrinates = toponym["Point"]["pos"].split()
+        pt_s.append(toponym_coodrinates)
         map_file = make_static_maps_response(toponym_coodrinates, delta,
-                                             map_sat_hyb, toponym_coodrinates)
+                                             map_sat_hyb)
         blit_amg(map_file)
     else:
         print("Ошибка выполнения запроса:")
@@ -82,12 +86,12 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_PAGEUP:
                     if 0.2 <= delta:
-                        delta -= 0.1
+                        delta -= 0.05
                         map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                         blit_amg(map_file)
                 if event.key == pygame.K_PAGEDOWN:
                     if delta <= 20:
-                        delta += 0.1
+                        delta += 0.05
                         map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                         blit_amg(map_file)
                 if event.key == pygame.K_UP:
@@ -116,6 +120,10 @@ if __name__ == '__main__':
                     blit_amg(map_file)
                 if event.key == pygame.K_F3:
                     map_sat_hyb = 'hybrid'  # я  хз как гибрид писать
+                    map_file = make_static_maps_response(someval, delta, map_sat_hyb)
+                    blit_amg(map_file)
+                if event.key == pygame.K_q:
+                    pt_s.clear()
                     map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                     blit_amg(map_file)
         pygame_widgets.update(events)
