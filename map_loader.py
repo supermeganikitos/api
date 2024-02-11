@@ -77,7 +77,7 @@ if __name__ == '__main__':
                         map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                         blit_amg(map_file)
                     if event.key == pygame.K_3:
-                        map_sat_hyb = 'hrd' # я  хз как гибрид писать
+                        map_sat_hyb = 'hybrid' # я  хз как гибрид писать
                         map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                         blit_amg(map_file)
             pygame.display.flip()
