@@ -28,7 +28,8 @@ if __name__ == '__main__':
     try:
         someval = [float(input()), float(input())]
         delta = 0.2
-        map_file = make_static_maps_response(someval, delta, 'map')
+        map_sat_hyb = 'map'
+        map_file = make_static_maps_response(someval, delta, map_sat_hyb)
         pygame.init()
         pygame.display.set_caption('Карта')
         size = width, height = 600, 450
@@ -44,28 +45,40 @@ if __name__ == '__main__':
                     if event.key == pygame.K_PAGEUP:
                         if 0.2 <= delta:
                             delta -= 0.1
-                            map_file = make_static_maps_response(someval, delta, 'map')
+                            map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                             blit_amg(map_file)
                     if event.key == pygame.K_PAGEDOWN:
                         if delta <= 20:
                             delta += 0.1
-                            map_file = make_static_maps_response(someval, delta, 'map')
+                            map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                             blit_amg(map_file)
                     if event.key == pygame.K_UP:
                         someval[1] += delta * 2
-                        map_file = make_static_maps_response(someval, delta, 'map')
+                        map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                         blit_amg(map_file)
                     if event.key == pygame.K_DOWN:
                         someval[1] -= delta * 2
-                        map_file = make_static_maps_response(someval, delta, 'map')
+                        map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                         blit_amg(map_file)
                     if event.key == pygame.K_LEFT:
                         someval[0] -= delta * 2
-                        map_file = make_static_maps_response(someval, delta, 'map')
+                        map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                         blit_amg(map_file)
                     if event.key == pygame.K_RIGHT:
                         someval[0] += delta * 2
-                        map_file = make_static_maps_response(someval, delta, 'map')
+                        map_file = make_static_maps_response(someval, delta, map_sat_hyb)
+                        blit_amg(map_file)
+                    if event.key == pygame.K_1:
+                        map_sat_hyb = 'map'
+                        map_file = make_static_maps_response(someval, delta, map_sat_hyb)
+                        blit_amg(map_file)
+                    if event.key == pygame.K_2:
+                        map_sat_hyb = 'sat'
+                        map_file = make_static_maps_response(someval, delta, map_sat_hyb)
+                        blit_amg(map_file)
+                    if event.key == pygame.K_3:
+                        map_sat_hyb = 'hrd' # я  хз как гибрид писать
+                        map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                         blit_amg(map_file)
             pygame.display.flip()
         pygame.quit()
