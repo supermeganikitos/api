@@ -26,7 +26,7 @@ def blit_amg(map_file):
 
 if __name__ == '__main__':
     try:
-        someval = (float(input()), float(input()))
+        someval = [float(input()), float(input())]
         delta = 0.2
         map_file = make_static_maps_response(someval, delta, 'map')
         pygame.init()
@@ -42,15 +42,31 @@ if __name__ == '__main__':
                     running = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_PAGEUP:
-                        if 0.02 < delta < 20:
-                            delta += 0.1
-                            map_file = make_static_maps_response(someval, delta, 'map')
-                            blit_amg(map_file)
-                    elif event.key == pygame.K_PAGEDOWN:
-                        if 0.02 < delta < 20:
+                        if 0.2 <= delta:
                             delta -= 0.1
                             map_file = make_static_maps_response(someval, delta, 'map')
                             blit_amg(map_file)
+                    if event.key == pygame.K_PAGEDOWN:
+                        if delta <= 20:
+                            delta += 0.1
+                            map_file = make_static_maps_response(someval, delta, 'map')
+                            blit_amg(map_file)
+                    if event.key == pygame.K_UP:
+                        someval[1] += delta * 2
+                        map_file = make_static_maps_response(someval, delta, 'map')
+                        blit_amg(map_file)
+                    if event.key == pygame.K_DOWN:
+                        someval[1] -= delta * 2
+                        map_file = make_static_maps_response(someval, delta, 'map')
+                        blit_amg(map_file)
+                    if event.key == pygame.K_LEFT:
+                        someval[0] -= delta * 2
+                        map_file = make_static_maps_response(someval, delta, 'map')
+                        blit_amg(map_file)
+                    if event.key == pygame.K_RIGHT:
+                        someval[0] += delta * 2
+                        map_file = make_static_maps_response(someval, delta, 'map')
+                        blit_amg(map_file)
             pygame.display.flip()
         pygame.quit()
     except Exception as e:
