@@ -1,3 +1,5 @@
+import json
+
 import pygame
 import pygame_widgets
 from pygame_widgets.button import Button
@@ -7,7 +9,7 @@ import requests
 API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
 
 
-def make_static_maps_response(someval_, delta, map_or_sat, ):
+def make_static_maps_response(someval_, delta, map_or_sat):
     global someval, pt_s
     someval = list(map(float, someval_))
     delta = str(delta)
@@ -18,10 +20,7 @@ def make_static_maps_response(someval_, delta, map_or_sat, ):
     }
     if pt_s:
         map_params['pt'] = '~'.join((','.join(i) for i in pt_s))
-        print(map_params['ll'])
-        print(map_params['pt'])
     map_api_server = "http://static-maps.yandex.ru/1.x/"
-    # ... и выполняем запрос
     response = requests.get(map_api_server, params=map_params)
     map_file = "map.jpg"
     with open(map_file, "wb") as file:
@@ -41,29 +40,33 @@ map_sat_hyb = 'map'
 map_file = make_static_maps_response(someval, delta, map_sat_hyb)
 pygame.init()
 pygame.display.set_caption('Карта')
-size = width, height = 600, 500
+size = width, height = 600, 550
 screen = pygame.display.set_mode(size)
 text_resp = TextBox(screen, 0, 0, 500, 50)
+text_adress = TextBox(screen, 0, 500, 600, 50)
+text_adress.u
 
 
 def func():
-    print(1)
     map_params = {
         'apikey': API_KEY,
         "geocode": ''.join(text_resp.text),
         "lang": 'ru_RU',
         "format": "json"
     }
-    print(map_params['geocode'])
     map_api_server = 'http://geocode-maps.yandex.ru/1.x/'
     response = requests.get(map_api_server, params=map_params)
     if response:
         json_response = response.json()
+        with open('js.json', 'w') as f:
+            json.dump(json_response, f, indent=4)
         toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+        adress = toponym['metaDataProperty']['GeocoderMetaData']["AddressDetails"]["Country"]["AddressLine"]
+        text_adress.setText(adress)
+        print(adress)
         toponym_coodrinates = toponym["Point"]["pos"].split()
         pt_s.append(toponym_coodrinates)
-        map_file = make_static_maps_response(toponym_coodrinates, delta,
-                                             map_sat_hyb)
+        map_file = make_static_maps_response(toponym_coodrinates, delta, map_sat_hyb)
         blit_amg(map_file)
     else:
         print("Ошибка выполнения запроса:")
@@ -71,7 +74,15 @@ def func():
         print("Http статус:", response.status_code, "(", response.reason, ")")
 
 
-button = Button(screen, 500, 0, 100, 50, text='Искать', onClick=func)
+def clear_func():
+    pt_s.clear()
+    text_adress.setText('')
+    map_file = make_static_maps_response(someval, delta, map_sat_hyb)
+    blit_amg(map_file)
+
+
+button_search = Button(screen, 500, 0, 50, 50, text='Искать', onClick=func, fontSize=15)
+button_click = Button(screen, 550, 0, 50, 50, text='Очистить', onClick=clear_func, fontSize=15)
 blit_amg(map_file)
 
 
@@ -123,9 +134,7 @@ if __name__ == '__main__':
                     map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                     blit_amg(map_file)
                 if event.key == pygame.K_q:
-                    pt_s.clear()
-                    map_file = make_static_maps_response(someval, delta, map_sat_hyb)
-                    blit_amg(map_file)
+                    clear_func()
         pygame_widgets.update(events)
         pygame.display.flip()
     pygame.quit()
