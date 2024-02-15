@@ -44,7 +44,6 @@ size = width, height = 600, 550
 screen = pygame.display.set_mode(size)
 text_resp = TextBox(screen, 0, 0, 500, 50)
 text_adress = TextBox(screen, 0, 500, 600, 50)
-text_adress.u
 
 
 def func():
@@ -130,7 +129,7 @@ if __name__ == '__main__':
                     map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                     blit_amg(map_file)
                 if event.key == pygame.K_F3:
-                    map_sat_hyb = 'hybrid'  # я  хз как гибрид писать
+                    map_sat_hyb = 'scl'  # я  хз как гибрид писать
                     map_file = make_static_maps_response(someval, delta, map_sat_hyb)
                     blit_amg(map_file)
                 if event.key == pygame.K_q:
